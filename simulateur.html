@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Simulateur d'économies — Assurance emprunteur</title>
+<meta name="description" content="Estimez en 2 minutes combien vous pourriez économiser sur votre assurance de prêt immobilier grâce à la loi Lemoine. Gratuit, sans engagement."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700&family=DM+Mono:wght@500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --ink:#0f1923;--ink2:#243040;--muted:#7a95ab;--border:#dce8f0;--bg:#f7f9fb;--white:#fff;
+  --green:#18c07a;--green-light:#e8faf3;--green-dark:#12a065;
+  --r:10px;--shadow:0 2px 16px rgba(15,25,35,.09);--shadow-lg:0 6px 40px rgba(15,25,35,.14);
+  --fd:'DM Serif Display',Georgia,serif;--fb:'Inter',system-ui,sans-serif;--fm:'DM Mono','Courier New',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--fb);background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:var(--green)}
+.w{max-width:680px;margin:0 auto;padding:0 20px}
+
+/* Header */
+header{background:var(--white);border-bottom:1px solid var(--border);padding:14px 0}
+.hi{display:flex;align-items:center;gap:10px}
+.lm{width:30px;height:30px;background:var(--green);border-radius:7px;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:1rem;flex-shrink:0}
+.lt{font-weight:600;font-size:.9rem}
+
+/* Hero */
+.hero{background:var(--ink);color:#fff;padding:48px 0 40px;text-align:center}
+.ey{display:inline-block;background:rgba(24,192,122,.15);color:var(--green);border:1px solid rgba(24,192,122,.3);border-radius:100px;font-size:.72rem;font-weight:600;letter-spacing:.07em;padding:3px 14px;text-transform:uppercase;margin-bottom:18px}
+h1{font-family:var(--fd);font-size:clamp(1.9rem,5vw,2.9rem);line-height:1.18;font-weight:400;margin-bottom:14px}
+h1 em{font-style:italic;color:var(--green)}
+.hs{font-size:.92rem;color:#8fa3b8;max-width:480px;margin:0 auto 32px}
+.pr{display:flex;justify-content:center;gap:32px;flex-wrap:wrap;margin-bottom:32px}
+.pi .n{display:block;font-family:var(--fm);font-size:1.6rem;color:var(--green);line-height:1;margin-bottom:3px}
+.pi .l{font-size:.7rem;color:#8fa3b8;line-height:1.4}
+.pi .s{font-size:.62rem;opacity:.6;display:block;margin-top:1px}
+.bh{display:inline-block;background:var(--green);color:var(--ink);font-weight:700;font-size:.95rem;padding:13px 28px;border-radius:var(--r);border:none;cursor:pointer;text-decoration:none;transition:background .2s}
+.bh:hover{background:#22d98a;text-decoration:none;color:var(--ink)}
+
+/* Sim card */
+.ss{padding:40px 0 60px}
+.sc{background:var(--white);border-radius:16px;box-shadow:var(--shadow-lg);overflow:hidden}
+.pt{height:3px;background:var(--border)}
+.pf{height:100%;background:linear-gradient(90deg,var(--green),#5de8b0);transition:width .4s ease}
+.sl{font-size:.7rem;font-weight:600;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;padding:14px 28px 0}
+
+/* Steps */
+.st{display:none;padding:24px 28px 28px;animation:fi .25s ease}
+.st.active{display:block}
+@keyframes fi{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:translateX(0)}}
+.stt{font-family:var(--fd);font-size:1.45rem;font-weight:400;margin-bottom:6px;line-height:1.25}
+.sth{font-size:.8rem;color:var(--muted);margin-bottom:22px;line-height:1.5}
+
+/* Cards */
+.cards{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+.cb{display:flex;align-items:center;gap:14px;padding:14px 18px;border:2px solid var(--border);border-radius:var(--r);background:var(--white);cursor:pointer;text-align:left;transition:border-color .15s,background .15s;width:100%}
+.cb:hover,.cb.sel{border-color:var(--green);background:var(--green-light)}
+.ci{font-size:1.3rem;width:36px;text-align:center;flex-shrink:0}
+.cl{font-weight:600;font-size:.9rem;display:block}
+.cs{font-size:.75rem;color:var(--muted);display:block}
+
+/* Fields */
+.flds{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+@media(max-width:500px){.flds{grid-template-columns:1fr}}
+.fg{display:flex;flex-direction:column;gap:5px}
+.fg label{font-size:.8rem;font-weight:600;color:var(--ink2)}
+.fg input,.fg select{padding:11px 13px;border:2px solid var(--border);border-radius:7px;font-size:.9rem;font-family:var(--fb);background:var(--bg);color:var(--ink);outline:none;transition:border-color .15s}
+.fg input:focus,.fg select:focus{border-color:var(--green);background:var(--white)}
+.fg .tip{font-size:.7rem;color:var(--muted);line-height:1.4}
+.opt{font-weight:400;color:var(--muted);font-size:.7rem}
+
+/* Toggles */
+.tgs{display:flex;gap:8px;margin-bottom:8px}
+.tg{flex:1;padding:10px;border:2px solid var(--border);border-radius:7px;background:var(--white);cursor:pointer;font-weight:500;font-size:.88rem;transition:border-color .15s,background .15s}
+.tg:hover,.tg.sel{border-color:var(--green);background:var(--green-light)}
+
+/* Nav */
+.nav{display:flex;justify-content:space-between;align-items:center;margin-top:4px}
+.bn{background:var(--green);color:var(--ink);font-weight:700;font-size:.9rem;padding:11px 24px;border-radius:var(--r);border:none;cursor:pointer;transition:background .2s}
+.bn:disabled{background:var(--border);color:var(--muted);cursor:not-allowed}
+.bn:not(:disabled):hover{background:#22d98a}
+.bb{background:transparent;color:var(--muted);font-size:.85rem;padding:10px 16px;border:1px solid var(--border);border-radius:var(--r);cursor:pointer}
+.bb:hover{color:var(--ink)}
+
+/* Result */
+.rbg{display:inline-block;background:var(--green-light);color:var(--green-dark);border:1px solid rgba(24,192,122,.25);border-radius:100px;font-size:.72rem;font-weight:700;padding:3px 12px;letter-spacing:.05em;text-transform:uppercase;margin-bottom:14px}
+.rt{font-family:var(--fd);font-size:1.3rem;font-weight:400;margin-bottom:18px;line-height:1.3}
+.eb{background:var(--ink);border-radius:12px;padding:28px;margin-bottom:18px;text-align:center}
+.el{font-size:.7rem;color:#8fa3b8;text-transform:uppercase;letter-spacing:.1em;font-weight:600;margin-bottom:6px}
+.en{font-family:var(--fm);font-size:clamp(2.4rem,8vw,3.6rem);color:var(--green);line-height:1;display:block}
+.er{font-size:.75rem;color:#8fa3b8;margin-top:8px}
+.em{font-size:.8rem;color:#8fa3b8;margin-top:10px}
+.em strong{color:#fff}
+.disc{background:#f0f5f9;border-radius:8px;padding:12px 16px;font-size:.75rem;color:var(--muted);line-height:1.5;margin-bottom:18px}
+.disc strong{color:var(--ink2)}
+.dg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+@media(max-width:460px){.dg{grid-template-columns:1fr}}
+.di{background:var(--bg);border-radius:8px;padding:12px 14px}
+.di span{display:block;font-size:.7rem;color:var(--muted);margin-bottom:2px}
+.di strong{font-size:.88rem;color:var(--ink)}
+.rcs{display:flex;flex-direction:column;gap:10px}
+.bp{background:var(--green);color:var(--ink);font-weight:700;font-size:.95rem;padding:13px;border-radius:var(--r);border:none;cursor:pointer;width:100%;text-align:center;transition:background .2s}
+.bp:hover{background:#22d98a}
+.bp:disabled{background:var(--border);color:var(--muted);cursor:not-allowed}
+.bsec{background:transparent;color:var(--muted);font-size:.82rem;padding:10px;border:1px solid var(--border);border-radius:var(--r);cursor:pointer;width:100%}
+.bsec:hover{color:var(--ink)}
+.lw h2{font-family:var(--fd);font-size:1.4rem;font-weight:400;margin-bottom:10px}
+.lw p{font-size:.85rem;color:var(--muted);margin-bottom:20px;line-height:1.6}
+
+/* Contact */
+.chd{margin-bottom:18px}
+.cbg{display:inline-block;background:var(--green-light);color:var(--green-dark);border:1px solid rgba(24,192,122,.25);border-radius:100px;font-size:.7rem;font-weight:700;padding:3px 12px;letter-spacing:.05em;text-transform:uppercase;margin-bottom:10px}
+.rb{background:#f0f5f9;border-radius:8px;padding:14px 16px;margin-bottom:18px}
+.cl2{display:flex;align-items:flex-start;gap:10px;font-size:.77rem;color:var(--ink2);line-height:1.55;cursor:pointer}
+.cl2 input{flex-shrink:0;width:17px;height:17px;margin-top:2px;accent-color:var(--green);cursor:pointer}
+.fb2{display:none}
+.fb2.visible{display:block;animation:fi .25s ease}
+.ln{font-size:.7rem;color:var(--muted);line-height:1.5;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+
+/* Confirm */
+.cw{text-align:center;padding:8px 0 4px}
+.ck{width:56px;height:56px;background:var(--green);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:1.6rem;margin-bottom:16px}
+.cw h2{font-family:var(--fd);font-size:1.5rem;font-weight:400;margin-bottom:10px}
+.cw p{font-size:.88rem;color:var(--muted);margin-bottom:22px;line-height:1.6}
+.cs2{background:var(--bg);border-radius:var(--r);padding:18px 20px;text-align:left;margin-bottom:18px}
+.cs2 h3{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:10px}
+.cs2 ol{padding-left:18px}
+.cs2 li{font-size:.83rem;color:var(--ink2);margin-bottom:6px}
+
+/* Sections */
+.how{padding:40px 0}
+.sct{font-family:var(--fd);font-size:clamp(1.5rem,4vw,2rem);font-weight:400;text-align:center;margin-bottom:32px}
+.hws{display:flex;gap:20px;flex-wrap:wrap;justify-content:center}
+.hws>div{flex:1;min-width:170px;max-width:220px;text-align:center}
+.hn{width:40px;height:40px;border:2px solid var(--green);color:var(--green);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-family:var(--fm);font-size:1rem;margin-bottom:12px}
+.hws h3{font-weight:700;font-size:.88rem;margin-bottom:6px}
+.hws p{font-size:.78rem;color:var(--muted);line-height:1.5}
+.hl{font-size:.72rem;color:var(--muted);text-align:center;max-width:540px;margin:24px auto 0;line-height:1.6}
+
+.trust{padding:24px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.tr{display:flex;flex-wrap:wrap;gap:16px;justify-content:center}
+.ti{display:flex;align-items:flex-start;gap:8px;min-width:180px;max-width:230px;flex:1}
+.ti-ico{font-size:1.1rem;flex-shrink:0;margin-top:1px}
+.ti-tx strong{display:block;font-size:.78rem;font-weight:700;margin-bottom:1px}
+.ti-tx span{font-size:.72rem;color:var(--muted);line-height:1.4}
+
+.faq{padding:40px 0}
+.fl{max-width:620px;margin:0 auto;display:flex;flex-direction:column;gap:6px}
+details{border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+summary{padding:14px 18px;font-weight:600;font-size:.85rem;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;background:var(--white)}
+summary:hover{background:var(--bg)}
+summary::after{content:'+';font-size:1.1rem;color:var(--green);flex-shrink:0;margin-left:12px}
+details[open] summary::after{content:'−'}
+details p{padding:0 18px 14px;font-size:.82rem;color:var(--ink2);line-height:1.7;background:var(--white)}
+
+footer{background:var(--ink);color:#8fa3b8;padding:28px 0}
+.fi{display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px}
+.flo{font-weight:600;color:#fff;font-size:.88rem}
+.fnv{display:flex;gap:20px;flex-wrap:wrap;justify-content:center}
+.fnv a{font-size:.75rem;color:#8fa3b8}
+.fnv a:hover{color:var(--green)}
+.fleg{font-size:.68rem;color:#4a6070;max-width:560px;line-height:1.6}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="w hi">
+    <div class="lm">&#8595;</div>
+    <span class="lt">EconomieSurMonPrêt.fr</span>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="w">
+    <div class="ey">Loi Lemoine — résiliation à tout moment</div>
+    <h1>Combien votre<br/><em>assurance emprunteur</em><br/>vous coûte-t-elle de trop&nbsp;?</h1>
+    <p class="hs">2 minutes. Une estimation indicative sur la durée restante de votre prêt. Un expert reprend votre dossier gratuitement si l'économie est significative.</p>
+    <div class="pr">
+      <div class="pi"><span class="n">5 000–15 000&nbsp;€</span><span class="l">d'économie moyenne<br/>constatée sur la durée</span><span class="s">Source : rapport Lemoine</span></div>
+      <div class="pi"><span class="n">40–70&nbsp;%</span><span class="l">de réduction possible<br/>avant 45 ans</span><span class="s">Source : Meilleurtaux 2026</span></div>
+      <div class="pi"><span class="n">81&nbsp;%</span><span class="l">des emprunteurs encore<br/>sur contrat bancaire</span><span class="s">Source : Actélior 2026</span></div>
+    </div>
+    <a href="#sim" class="bh">Estimer mon économie →</a>
+  </div>
+</section>
+
+<section class="ss" id="sim">
+  <div class="w">
+    <div class="sc">
+      <div class="pt"><div class="pf" id="pb" style="width:0%"></div></div>
+      <div class="sl" id="sl">Étape 1 sur 5</div>
+
+      <!-- ÉTAPE 1 : Type de crédit -->
+      <div class="st active" id="s1">
+        <h2 class="stt">Quel crédit souhaitez-vous optimiser&nbsp;?</h2>
+        <p class="sth">Le simulateur est calibré sur le crédit immobilier, où les économies sont les plus significatives.</p>
+        <div class="cards">
+          <button class="cb" data-f="type" data-v="immo" onclick="pick(this,1)">
+            <span class="ci">🏠</span><span><span class="cl">Crédit immobilier</span><span class="cs">Résidence principale, secondaire ou locatif</span></span>
+          </button>
+          <button class="cb" data-f="type" data-v="auto" onclick="pick(this,1)">
+            <span class="ci">🚗</span><span><span class="cl">Crédit auto</span><span class="cs">Véhicule personnel ou professionnel</span></span>
+          </button>
+          <button class="cb" data-f="type" data-v="pro" onclick="pick(this,1)">
+            <span class="ci">🏢</span><span><span class="cl">Crédit professionnel</span><span class="cs">Financement d'activité</span></span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ÉTAPE 2 : Données prêt -->
+      <div class="st" id="s2">
+        <h2 class="stt">Votre prêt en quelques chiffres</h2>
+        <p class="sth">L'approximatif suffit — ces données servent uniquement à calculer l'estimation indicative.</p>
+        <div class="flds">
+          <div class="fg">
+            <label for="cap">Capital restant dû (€)</label>
+            <input type="number" id="cap" placeholder="ex. 180 000" min="1000" max="2000000" oninput="v2()"/>
+            <span class="tip">Visible sur votre relevé ou tableau d'amortissement</span>
+          </div>
+          <div class="fg">
+            <label for="dur">Durée restante (années)</label>
+            <input type="number" id="dur" placeholder="ex. 15" min="1" max="30" oninput="v2()"/>
+          </div>
+          <div class="fg">
+            <label for="tx">Taux assurance actuel (%) <span class="opt">optionnel</span></label>
+            <input type="number" id="tx" placeholder="ex. 0.34" step="0.01" min="0" max="3" oninput="v2()"/>
+            <span class="tip">Si inconnu, nous utilisons la moyenne du marché</span>
+          </div>
+        </div>
+        <div class="nav">
+          <button class="bb" onclick="go(1)">← Retour</button>
+          <button class="bn" id="n2" disabled onclick="go(3)">Suivant →</button>
+        </div>
+      </div>
+
+      <!-- ÉTAPE 3 : Type assurance -->
+      <div class="st" id="s3">
+        <h2 class="stt">Votre assurance est-elle celle de votre banque&nbsp;?</h2>
+        <p class="sth">C'est le facteur n°1 pour évaluer votre potentiel d'économie.</p>
+        <div class="cards">
+          <button class="cb" data-f="assur" data-v="bancaire" onclick="pick(this,3)">
+            <span class="ci">🏦</span><span><span class="cl">Assurance bancaire</span><span class="cs">Souscrite directement auprès de ma banque (contrat groupe)</span></span>
+          </button>
+          <button class="cb" data-f="assur" data-v="deleguee" onclick="pick(this,3)">
+            <span class="ci">🔀</span><span><span class="cl">Assurance déléguée</span><span class="cs">J'ai déjà un assureur externe à ma banque</span></span>
+          </button>
+          <button class="cb" data-f="assur" data-v="inconnu" onclick="pick(this,3)">
+            <span class="ci">❓</span><span><span class="cl">Je ne sais pas</span><span class="cs">Je ne me souviens pas des détails</span></span>
+          </button>
+        </div>
+        <div class="nav"><button class="bb" onclick="go(2)">← Retour</button><span></span></div>
+      </div>
+
+      <!-- ÉTAPE 4 : Profil -->
+      <div class="st" id="s4">
+        <h2 class="stt">Votre profil emprunteur</h2>
+        <p class="sth">L'âge est le principal déterminant du taux délégué. Plus vous êtes jeune, plus l'écart est important.</p>
+        <div class="flds" style="grid-template-columns:1fr">
+          <div class="fg">
+            <label for="age">Votre âge</label>
+            <input type="number" id="age" placeholder="ex. 38" min="18" max="75" oninput="v4()"/>
+          </div>
+        </div>
+        <p style="font-size:.8rem;font-weight:600;color:var(--ink2);margin-bottom:8px">Fumeur&nbsp;?</p>
+        <div class="tgs">
+          <button class="tg" data-f="fumeur" data-v="non" onclick="tog(this);v4()">Non</button>
+          <button class="tg" data-f="fumeur" data-v="oui" onclick="tog(this);v4()">Oui</button>
+        </div>
+        <p style="font-size:.7rem;color:var(--muted);margin-bottom:24px">Les non-fumeurs bénéficient de taux jusqu'à 50&nbsp;% inférieurs en délégation</p>
+        <div class="nav">
+          <button class="bb" onclick="go(3)">← Retour</button>
+          <button class="bn" id="n4" disabled onclick="calc();go(5)">Calculer →</button>
+        </div>
+      </div>
+
+      <!-- ÉTAPE 5 : Résultat -->
+      <div class="st" id="s5"><div id="rz"></div></div>
+
+      <!-- ÉTAPE 6 : Formulaire -->
+      <div class="st" id="s6">
+        <div class="chd">
+          <div class="cbg" id="cbg"></div>
+          <h2 class="stt">Recevoir l'étude personnalisée <em style="font-style:italic">gratuite</em></h2>
+          <p class="sth">Un expert rappelle dans les 24h ouvrées. Aucun engagement.</p>
+        </div>
+        <div class="rb">
+          <label class="cl2">
+            <input type="checkbox" id="rgpd" onchange="unlock()"/>
+            <span>J'accepte que mes données (prénom, email, téléphone) soient transmises à UAI, courtier partenaire, pour réaliser l'étude de mon assurance emprunteur. Je peux me désabonner à tout moment. <a href="politique-confidentialite.html" style="color:var(--green)">Politique de confidentialité →</a></span>
+          </label>
+        </div>
+        <div class="fb2" id="fb2">
+          <!--
+          ╔══════════════════════════════════════════════════════╗
+          ║  FORMSPREE — CONFIGURATION (5 minutes, gratuit)     ║
+          ║  1. Ouvrir formspree.io → créer un compte gratuit   ║
+          ║  2. New Form → copier l'endpoint (ex: f/abc123)     ║
+          ║  3. Remplacer YOUR_FORMSPREE_ID ci-dessous          ║
+          ╚══════════════════════════════════════════════════════╝
+          -->
+          <form id="lf" action="https://formspree.io/f/YOUR_FORMSPREE_ID" method="POST" onsubmit="sub(event)">
+            <!-- Champs cachés : données simulateur -->
+            <input type="hidden" name="type_credit"              id="h1"/>
+            <input type="hidden" name="capital_restant_du"       id="h2"/>
+            <input type="hidden" name="duree_restante"           id="h3"/>
+            <input type="hidden" name="taux_actuel"              id="h4"/>
+            <input type="hidden" name="type_assurance"           id="h5"/>
+            <input type="hidden" name="age"                      id="h6"/>
+            <input type="hidden" name="fumeur"                   id="h7"/>
+            <input type="hidden" name="economie_basse_euros"     id="h8"/>
+            <input type="hidden" name="economie_haute_euros"     id="h9"/>
+            <input type="hidden" name="economie_centrale_euros"  id="h10"/>
+            <input type="hidden" name="qualification_lead"       id="h11"/>
+            <input type="hidden" name="consent_rgpd"             value="OUI — opt-in explicite"/>
+            <input type="hidden" name="_subject"                 id="hsub" value="Nouveau lead simulateur"/>
+            <div class="flds">
+              <div class="fg">
+                <label for="pr">Prénom</label>
+                <input type="text" name="prenom" id="pr" placeholder="Marie" autocomplete="given-name"/>
+              </div>
+              <div class="fg">
+                <label for="em">Email *</label>
+                <input type="email" name="email" id="em" placeholder="marie@exemple.fr" required autocomplete="email" oninput="vc()"/>
+              </div>
+              <div class="fg">
+                <label for="te">Téléphone <span class="opt">recommandé</span></label>
+                <input type="tel" name="telephone" id="te" placeholder="06 XX XX XX XX" autocomplete="tel"/>
+              </div>
+              <div class="fg">
+                <label for="mo">Meilleur moment pour rappeler</label>
+                <select name="meilleur_moment" id="mo">
+                  <option value="">Indifférent</option>
+                  <option value="matin">Matin (9h–12h)</option>
+                  <option value="apresmidi">Après-midi (14h–18h)</option>
+                  <option value="soir">Soir (18h–20h)</option>
+                </select>
+              </div>
+            </div>
+            <button type="submit" class="bp" id="sb" disabled>Envoyer mon dossier à un expert UAI →</button>
+            <p class="ln">Mise en relation uniquement — nous ne réalisons aucune étude ni conseil en assurance. L'étude est effectuée gratuitement par UAI, intermédiaire en assurance enregistré à l'ORIAS n°&nbsp;<strong>[À COMPLÉTER]</strong>.</p>
+          </form>
+        </div>
+      </div>
+
+      <!-- ÉTAPE 7 : Confirmation -->
+      <div class="st" id="s7">
+        <div class="cw">
+          <div class="ck">&#10003;</div>
+          <h2>Dossier transmis</h2>
+          <p>Un expert UAI vous contactera dans les <strong>24h ouvrées</strong> pour vous présenter les offres réelles disponibles pour votre profil.</p>
+          <div class="cs2">
+            <h3>La suite</h3>
+            <ol>
+              <li>UAI analyse les offres du marché pour votre profil</li>
+              <li>Vous recevez une proposition avec garanties équivalentes</li>
+              <li>Si vous changez, UAI gère tout avec votre banque (délai légal : 10 jours)</li>
+            </ol>
+          </div>
+          <p class="ln">Service gratuit pour vous. UAI est rémunéré par l'assureur en cas de souscription. Ce site est un service d'apport d'affaires — nous réalisons uniquement une mise en relation.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="how">
+  <div class="w">
+    <h2 class="sct">Comment ça marche</h2>
+    <div class="hws">
+      <div><div class="hn">1</div><h3>Estimez votre économie</h3><p>Le simulateur calcule une fourchette indicative basée sur les écarts réels entre contrat bancaire et délégation.</p></div>
+      <div><div class="hn">2</div><h3>Un expert analyse votre dossier</h3><p>UAI, courtier partenaire enregistré ORIAS, réalise l'étude personnalisée gratuite et trouve les meilleures offres.</p></div>
+      <div><div class="hn">3</div><h3>Vous changez si ça vaut le coup</h3><p>Aucun engagement. Si vous décidez de changer, UAI gère tout avec votre banque. Délai légal : 10 jours.</p></div>
+    </div>
+    <p class="hl">Ce site est un service d'apport d'affaires. Nous réalisons uniquement une mise en relation avec UAI, intermédiaire en assurance enregistré à l'ORIAS. Nous ne donnons aucun conseil en assurance. Les estimations sont indicatives et non contractuelles.</p>
+  </div>
+</section>
+
+<section class="trust">
+  <div class="w tr">
+    <div class="ti"><span class="ti-ico">⚖️</span><div class="ti-tx"><strong>Loi Lemoine 2022</strong><span>Résiliation à tout moment, sans frais ni pénalité</span></div></div>
+    <div class="ti"><span class="ti-ico">🔒</span><div class="ti-tx"><strong>RGPD</strong><span>Données transmises uniquement à UAI, avec votre consentement explicite</span></div></div>
+    <div class="ti"><span class="ti-ico">🆓</span><div class="ti-tx"><strong>Gratuit pour vous</strong><span>Aucun frais. Rémunéré par l'assureur si vous changez.</span></div></div>
+    <div class="ti"><span class="ti-ico">📋</span><div class="ti-tx"><strong>ORIAS</strong><span>UAI est courtier enregistré. Étude par des professionnels réglementés.</span></div></div>
+  </div>
+</section>
+
+<section class="faq">
+  <div class="w">
+    <h2 class="sct">Questions fréquentes</h2>
+    <div class="fl">
+      <details><summary>L'estimation est-elle mon nouveau tarif définitif&nbsp;?</summary><p>Non. Le simulateur fournit une <strong>estimation indicative et non contractuelle</strong>, basée sur les fourchettes de taux moyens de marché (Meilleurtaux, France Épargne, Magnolia 2026). Seul un expert UAI peut vous donner une proposition ferme.</p></details>
+      <details><summary>Puis-je vraiment changer d'assurance à tout moment&nbsp;?</summary><p>Oui. La <strong>loi Lemoine (2022)</strong> vous autorise à changer à n'importe quel moment, sans frais et sans pénalité. Votre banque a 10 jours ouvrés pour répondre. En cas de refus, elle doit le motiver par écrit.</p></details>
+      <details><summary>Qu'est-ce que l'équivalence des garanties&nbsp;?</summary><p>Le nouveau contrat doit couvrir au minimum les mêmes risques (décès, PTIA, IPT, ITT…) que l'assurance de votre banque. UAI vérifie cette équivalence et gère la correspondance avec votre banque.</p></details>
+      <details><summary>Ce service est-il vraiment gratuit&nbsp;?</summary><p>Oui, pour vous. Ce site réalise une mise en relation avec UAI. Si vous souscrivez une nouvelle assurance via UAI, c'est l'assureur qui rémunère le courtier.</p></details>
+      <details><summary>Mes données de santé sont-elles collectées&nbsp;?</summary><p>Non. Ce simulateur ne collecte aucune donnée de santé. Seules les données nécessaires à la mise en relation sont transmises à UAI, avec votre consentement opt-in.</p></details>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="w fi">
+    <div class="flo">&#8595; EconomieSurMonPrêt.fr</div>
+    <nav class="fnv">
+      <a href="mentions-legales.html">Mentions légales</a>
+      <a href="politique-confidentialite.html">Confidentialité</a>
+      <a href="mailto:contact@votredomaine.fr">Contact</a>
+    </nav>
+    <p class="fleg">Ce site est un service d'apport d'affaires réalisant uniquement des mises en relation. Il ne constitue pas un conseil en assurance. Les estimations sont indicatives et non contractuelles. Partenaire : UAI [N° ORIAS : À COMPLÉTER].</p>
+    <p style="font-size:.65rem;color:#2a4050">© 2026 — Tous droits réservés</p>
+  </div>
+</footer>
+
+<script>
+/* ═══════════════════════════════════════════════════════
+   MOTEUR DE CALCUL — DONNÉES SOURCÉES (juin 2026)
+   Meilleurtaux / France Épargne / Magnolia / Actélior
+
+   Taux bancaire moyen (% capital initial / an) :
+     ≤35 : 0.30 | 36-44 : 0.34 | 45-54 : 0.40 | 55-65 : 0.43 | >65 : 0.55
+
+   Taux délégué (% CRD / an) basse / haute :
+     ≤35 : 0.10-0.14 | 36-44 : 0.12-0.18 | 45-54 : 0.22-0.28
+     55-65 : 0.28-0.34 | >65 : 0.40-0.48
+   Majoration fumeur : ×1.40
+
+   Coût bancaire = taux × capital_initial × durée   (banques = capital fixe)
+   Coût délégué  = taux × CRD × durée × 0.60        (0.60 = amortissement moyen)
+═══════════════════════════════════════════════════════ */
+
+const TB  = [[35,.30],[44,.34],[54,.40],[65,.43],[99,.55]];
+const TDL = [[35,.10],[44,.12],[54,.22],[65,.28],[99,.40]];
+const TDH = [[35,.14],[44,.18],[54,.28],[65,.34],[99,.48]];
+const D={type:null,cap:null,dur:null,tx:null,assur:null,age:null,fumeur:null};
+const R={};
+
+function gtx(t,a){for(const[s,v]of t)if(a<=s)return v;return t[t.length-1][1]}
+function f(n){return Number(n).toLocaleString('fr-FR')}
+
+function go(n){
+  document.querySelectorAll('.st').forEach(s=>s.classList.remove('active'));
+  document.getElementById('s'+n).classList.add('active');
+  document.getElementById('pb').style.width=Math.min(((n-1)/5)*100,100)+'%';
+  const L={1:'Étape 1 sur 5',2:'Étape 2 sur 5 — Votre prêt',3:'Étape 3 sur 5 — Votre assurance',4:'Étape 4 sur 5 — Votre profil',5:'Estimation calculée',6:"Recevoir l'étude gratuite",7:'Confirmé'};
+  document.getElementById('sl').textContent=L[n]||'';
+  document.getElementById('sim').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function pick(btn,step){
+  btn.closest('.cards').querySelectorAll('.cb').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+  D[btn.dataset.f]=btn.dataset.v;
+  setTimeout(()=>go(step+1),220);
+}
+
+function tog(btn){
+  btn.closest('.tgs').querySelectorAll('.tg').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+  D[btn.dataset.f]=btn.dataset.v;
+}
+
+function v2(){
+  D.cap=document.getElementById('cap').value;
+  D.dur=document.getElementById('dur').value;
+  D.tx=document.getElementById('tx').value;
+  document.getElementById('n2').disabled=!(D.cap>0&&D.dur>0);
+}
+
+function v4(){
+  D.age=document.getElementById('age').value;
+  document.getElementById('n4').disabled=!(D.age&&+D.age>=18&&+D.age<=75&&D.fumeur!==null);
+}
+
+function calc(){
+  const C=+D.cap, Du=+D.dur, A=+D.age;
+  const mf=(D.fumeur==='oui')?1.40:1;
+  const tb=D.tx&&+D.tx>0?+D.tx/100:gtx(TB,A)/100;
+  const tdl=gtx(TDL,A)/100*mf, tdh=gtx(TDH,A)/100*mf;
+  const cB=tb*C*Du;
+  const cDl=tdl*C*Du*0.60, cDh=tdh*C*Du*0.60;
+  const m={bancaire:1,deleguee:.30,inconnu:.70}[D.assur]||.70;
+  const eLow=Math.max(0,(cB-cDh)*m), eHigh=Math.max(0,(cB-cDl)*m);
+  const eMid=(eLow+eHigh)/2;
+  R.low=Math.round(eLow/100)*100;
+  R.high=Math.round(eHigh/100)*100;
+  R.mid=Math.round(eMid/100)*100;
+  R.mo=Math.max(1,Math.round(eMid/(Du*12)));
+  R.ok=eMid>=800;
+  R.q=D.assur==='bancaire'&&C>=100000&&Du>=5&&eMid>=3000?'🔥 Dossier à fort potentiel':eMid>=1500?'✅ Dossier éligible':'💡 Économie possible';
+  R.tb=(tb*100).toFixed(2);
+  R.td=((tdl+tdh)/2*100).toFixed(2);
+  render();
+}
+
+function render(){
+  const z=document.getElementById('rz');
+  if(!R.ok){
+    z.innerHTML=`<div class="lw"><h2>Économie potentielle limitée</h2><p>D'après vos données (capital ou durée faibles), l'économie estimée est inférieure à 800&nbsp;€. Cela peut valoir la peine d'obtenir une étude précise&nbsp;: la réalité peut différer de cette estimation basée sur des moyennes de marché.</p><div style="display:flex;flex-direction:column;gap:10px"><button class="bp" onclick="goc()">Demander l'étude gratuite quand même →</button><button class="bsec" onclick="go(1)">← Recommencer</button></div></div>`;
+    return;
+  }
+  const al={bancaire:'Assurance bancaire (contrat groupe)',deleguee:'Assurance déléguée',inconnu:'Type non renseigné'}[D.assur]||'—';
+  z.innerHTML=`
+    <div class="rbg">${R.q}</div>
+    <p class="rt">Estimation indicative d'économie sur la durée restante&nbsp;:</p>
+    <div class="eb">
+      <div class="el">Économie potentielle estimée</div>
+      <span class="en" id="cu">0&nbsp;€</span>
+      <div class="er">Fourchette&nbsp;: ${f(R.low)}&nbsp;€ – ${f(R.high)}&nbsp;€</div>
+      <div class="em">Soit environ <strong>~${R.mo}&nbsp;€/mois</strong> récupérés</div>
+    </div>
+    <div class="disc"><strong>⚠️ Estimation indicative, non contractuelle.</strong> Basée sur les fourchettes de taux moyens de marché (Meilleurtaux, France Épargne, Magnolia 2026). L'économie réelle dépend de votre profil précis. Un expert UAI établit l'étude personnalisée gratuitement.</div>
+    <div class="dg">
+      <div class="di"><span>Capital restant dû</span><strong>${f(D.cap)}&nbsp;€</strong></div>
+      <div class="di"><span>Durée restante</span><strong>${D.dur}&nbsp;ans</strong></div>
+      <div class="di"><span>Taux bancaire estimé</span><strong>${R.tb}&nbsp;%/an</strong></div>
+      <div class="di"><span>Taux délégué moyen marché</span><strong>${R.td}&nbsp;%/an</strong></div>
+      <div class="di"><span>Type d'assurance</span><strong>${al}</strong></div>
+      <div class="di"><span>Profil</span><strong>${D.age}&nbsp;ans, ${D.fumeur==='oui'?'fumeur':'non-fumeur'}</strong></div>
+    </div>
+    <div class="rcs">
+      <button class="bp" onclick="goc()">Recevoir l'étude personnalisée gratuite →</button>
+      <button class="bsec" onclick="go(1)">← Modifier mes données</button>
+    </div>`;
+  cu('cu',R.mid,1100);
+}
+
+function goc(){
+  document.getElementById('cbg').textContent='Estimation : ~'+f(R.mid)+' € d\'économie potentielle';
+  go(6);
+}
+
+function cu(id,target,ms){
+  const el=document.getElementById(id);
+  const step=target/(ms/16);let cur=0;
+  const t=setInterval(()=>{cur+=step;if(cur>=target){cur=target;clearInterval(t)}el.textContent=f(Math.round(cur))+'\u00a0€';},16);
+}
+
+function unlock(){
+  document.getElementById('fb2').classList.toggle('visible',document.getElementById('rgpd').checked);
+}
+
+function vc(){
+  const e=document.getElementById('em').value;
+  document.getElementById('sb').disabled=!(e&&e.includes('@')&&e.includes('.'));
+}
+
+function sub(e){
+  e.preventDefault();
+  /* Remplir les champs cachés avec les données du simulateur */
+  const map=[[1,D.type],[2,D.cap],[3,D.dur],[4,D.tx],[5,D.assur],[6,D.age],[7,D.fumeur],[8,R.low],[9,R.high],[10,R.mid],[11,R.q]];
+  map.forEach(([i,v])=>document.getElementById('h'+i).value=v||'');
+  document.getElementById('hsub').value='🔔 Lead ['+(R.mid>=3000?'HIGH':R.mid>=1500?'MEDIUM':'LOW')+'] — '+(document.getElementById('pr').value||'Prospect')+' — '+f(R.mid)+' € estimés';
+
+  const btn=document.getElementById('sb');
+  btn.disabled=true;btn.textContent='Envoi en cours…';
+
+  fetch(document.getElementById('lf').action,{
+    method:'POST',body:new FormData(document.getElementById('lf')),
+    headers:{'Accept':'application/json'}
+  }).then(r=>{go(7);}).catch(()=>{go(7);});
+}
+</script>
+</body>
+</html>
