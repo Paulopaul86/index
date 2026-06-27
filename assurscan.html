@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AssurScan — Analysez votre assurance emprunteur</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=DM+Serif+Display:ital@0;1&display=swap');
+
+:root {
+  --marine: #0A1628;
+  --marine-mid: #112240;
+  --bleu: #1A4F8A;
+  --bleu-vif: #1E6FBF;
+  --cyan: #00B4D8;
+  --vert: #06A77D;
+  --vert-clair: #E6F7F3;
+  --rouge: #E63946;
+  --or: #F4A261;
+  --gris-bg: #F5F7FA;
+  --gris-card: #FFFFFF;
+  --gris-bordure: #DDE3ED;
+  --gris-texte: #1A2333;
+  --gris-moyen: #5A6780;
+  --gris-clair: #EEF1F6;
+  --blanc: #FFFFFF;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: var(--gris-bg);
+  color: var(--gris-texte);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── ÉCRANS ── */
+.screen { display: none; min-height: 100vh; }
+.screen.active { display: flex; flex-direction: column; }
+
+/* ══════════════════════════════
+   ÉCRAN 1 — ACCROCHE
+══════════════════════════════ */
+#s1 {
+  background: var(--marine);
+  position: relative;
+  overflow: hidden;
+}
+
+.s1-bg-gradient {
+  position: absolute;
+  inset: 0;
+  background: 
+    radial-gradient(ellipse 80% 60% at 70% 20%, rgba(0,180,216,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 10% 80%, rgba(26,79,138,0.3) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.s1-grid {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+}
+
+.s1-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 48px 24px;
+  text-align: center;
+  gap: 0;
+}
+
+.s1-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0,180,216,0.12);
+  border: 1px solid rgba(0,180,216,0.3);
+  border-radius: 100px;
+  padding: 8px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cyan);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 32px;
+}
+
+.s1-badge::before {
+  content: '';
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--cyan);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.4); }
+}
+
+.s1-chiffre {
+  font-family: 'DM Serif Display', Georgia, serif;
+  font-size: clamp(72px, 14vw, 140px);
+  font-weight: 400;
+  color: var(--blanc);
+  line-height: 1;
+  margin-bottom: 0px;
+  position: relative;
+}
+
+.s1-chiffre span {
+  color: var(--cyan);
+}
+
+.s1-chiffre-label {
+  font-size: clamp(13px, 2vw, 16px);
+  color: rgba(255,255,255,0.45);
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  margin-bottom: 24px;
+}
+
+.s1-headline {
+  font-size: clamp(22px, 4.5vw, 42px);
+  font-weight: 800;
+  color: var(--blanc);
+  line-height: 1.15;
+  max-width: 700px;
+  margin-bottom: 16px;
+}
+
+.s1-headline em {
+  font-style: normal;
+  color: var(--cyan);
+}
+
+.s1-sub {
+  font-size: clamp(15px, 2vw, 18px);
+  color: rgba(255,255,255,0.55);
+  max-width: 520px;
+  line-height: 1.6;
+  margin-bottom: 48px;
+  font-weight: 400;
+}
+
+.btn-scan {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--cyan);
+  color: var(--marine);
+  font-size: 17px;
+  font-weight: 700;
+  font-family: inherit;
+  padding: 18px 40px;
+  border-radius: 100px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s;
+  box-shadow: 0 8px 32px rgba(0,180,216,0.35);
+  letter-spacing: 0.2px;
+}
+
+.btn-scan:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0,180,216,0.5);
+  background: #00C8EF;
+}
+
+.btn-scan svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.5; }
+
+.s1-scroll-hint {
+  position: absolute;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: rgba(255,255,255,0.25);
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  animation: bounce 2.5s ease-in-out infinite;
+}
+
+.s1-scroll-hint svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; }
+
+@keyframes bounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(6px); }
+}
+
+/* ══════════════════════════════
+   ÉCRAN 2 — RÉVÉLATION
+══════════════════════════════ */
+#s2 {
+  background: var(--marine-mid);
+  justify-content: center;
+}
+
+.s2-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 64px 24px;
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.s2-eyebrow {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--cyan);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+.s2-title {
+  font-family: 'DM Serif Display', Georgia, serif;
+  font-size: clamp(28px, 5vw, 48px);
+  color: var(--blanc);
+  text-align: center;
+  line-height: 1.2;
+  margin-bottom: 12px;
+}
+
+.s2-title em {
+  font-style: italic;
+  color: var(--cyan);
+}
+
+.s2-intro {
+  font-size: clamp(15px, 2vw, 17px);
+  color: rgba(255,255,255,0.5);
+  text-align: center;
+  line-height: 1.6;
+  margin-bottom: 48px;
+  max-width: 560px;
+}
+
+.s2-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  width: 100%;
+  margin-bottom: 48px;
+}
+
+.s2-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.s2-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--cyan);
+  opacity: 0.5;
+}
+
+.s2-card-icon {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  background: rgba(0,180,216,0.12);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+.s2-card-icon svg { width: 20px; height: 20px; fill: none; stroke: var(--cyan); stroke-width: 2; }
+
+.s2-card h3 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--blanc);
+  line-height: 1.3;
+}
+
+.s2-card p {
+  font-size: 14px;
+  color: rgba(255,255,255,0.45);
+  line-height: 1.55;
+}
+
+.s2-card .s2-card-reveal {
+  font-size: 13px;
+  color: var(--cyan);
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.btn-continuer {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: transparent;
+  color: var(--blanc);
+  font-size: 16px;
+  font-weight: 600;
+  font-family: inherit;
+  padding: 16px 36px;
+  border-radius: 100px;
+  border: 1.5px solid rgba(255,255,255,0.25);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-continuer:hover {
+  border-color: var(--cyan);
+  color: var(--cyan);
+  background: rgba(0,180,216,0.06);
+}
+
+.btn-continuer svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.5; }
+
+/* ══════════════════════════════
+   ÉCRAN 3 — FORMULAIRE
+══════════════════════════════ */
+#s3 {
+  background: var(--gris-bg);
+  justify-content: center;
+}
+
+.s3-content {
+  width: 100%;
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 48px 24px;
+}
+
+.s3-header {
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+.s3-header .s3-step {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--bleu-vif);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.s3-header h2 {
+  font-size: clamp(22px, 4vw, 32px);
+  font-weight: 800;
+  color: var(--gris-texte);
+  line-height: 1.2;
+  margin-bottom: 10px;
+}
+
+.s3-header p {
+  font-size: 15px;
+  color: var(--gris-moyen);
+  line-height: 1.6;
+}
+
+.form-card {
+  background: var(--blanc);
+  border-radius: 16px;
+  border: 1px solid var(--gris-bordure);
+  box-shadow: 0 4px 24px rgba(10,22,40,0.07);
+  overflow: hidden;
+}
+
+.form-section {
+  padding: 28px 32px;
+  border-bottom: 1px solid var(--gris-clair);
+}
+
+.form-section:last-child { border-bottom: none; }
+
+.form-section-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--gris-moyen);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.form-section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--gris-clair);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.form-row.single { grid-template-columns: 1fr; }
+.form-row:last-child { margin-bottom: 0; }
+
+.fg { display: flex; flex-direction: column; gap: 6px; }
+
+.fg label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gris-texte);
+}
+
+.fg label .opt {
+  font-weight: 400;
+  color: var(--gris-moyen);
+  font-size: 12px;
+  margin-left: 4px;
+}
+
+.fg input, .fg select {
+  border: 1.5px solid var(--gris-bordure);
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 16px;
+  color: var(--gris-texte);
+  font-family: inherit;
+  background: var(--blanc);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  width: 100%;
+  appearance: none;
+}
+
+.fg input:focus, .fg select:focus {
+  border-color: var(--bleu-vif);
+  box-shadow: 0 0 0 3px rgba(30,111,191,0.1);
+}
+
+.fg .input-unit { position: relative; }
+.fg .input-unit input { padding-right: 52px; }
+.fg .input-unit .unit {
+  position: absolute;
+  right: 14px; top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gris-moyen);
+  pointer-events: none;
+}
+
+.fg select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%235A6780' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+  cursor: pointer;
+}
+
+.taux-info {
+  background: #EEF5FF;
+  border: 1px solid #C5D8F5;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--bleu);
+  line-height: 1.5;
+  margin-top: 6px;
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.taux-info svg { width: 15px; height: 15px; fill: none; stroke: var(--bleu); stroke-width: 2; flex-shrink: 0; margin-top: 1px; }
+
+.form-footer {
+  padding: 24px 32px;
+  background: var(--gris-clair);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.form-footer p {
+  font-size: 13px;
+  color: var(--gris-moyen);
+  line-height: 1.5;
+  flex: 1;
+  min-width: 200px;
+}
+
+.btn-simuler {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bleu);
+  color: var(--blanc);
+  font-size: 16px;
+  font-weight: 700;
+  font-family: inherit;
+  padding: 14px 32px;
+  border-radius: 100px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  box-shadow: 0 4px 16px rgba(26,79,138,0.3);
+}
+
+.btn-simuler:hover { background: var(--bleu-vif); transform: translateY(-1px); }
+.btn-simuler svg { width: 18px; height: 18px; fill: none; stroke: white; stroke-width: 2.5; }
+
+/* ══════════════════════════════
+   ÉCRAN 4 — ANALYSE
+══════════════════════════════ */
+#s4 {
+  background: var(--marine);
+  align-items: center;
+  justify-content: center;
+}
+
+.s4-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 48px 24px;
+  text-align: center;
+}
+
+.scan-animation {
+  position: relative;
+  width: 100px; height: 100px;
+  margin-bottom: 8px;
+}
+
+.scan-circle {
+  width: 100px; height: 100px;
+  border-radius: 50%;
+  border: 3px solid rgba(0,180,216,0.2);
+  border-top-color: var(--cyan);
+  animation: spin 1s linear infinite;
+  position: absolute;
+}
+
+.scan-circle-2 {
+  width: 72px; height: 72px;
+  top: 14px; left: 14px;
+  border: 2px solid rgba(0,180,216,0.1);
+  border-bottom-color: var(--cyan);
+  animation: spin 1.5s linear infinite reverse;
+  position: absolute;
+  border-radius: 50%;
+}
+
+.scan-icon {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 32px; height: 32px;
+  fill: none; stroke: var(--cyan); stroke-width: 2;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.s4-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--blanc);
+}
+
+.s4-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 340px;
+}
+
+.s4-step {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  color: rgba(255,255,255,0.4);
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: all 0.4s ease;
+  text-align: left;
+}
+
+.s4-step.visible { opacity: 1; transform: translateX(0); color: rgba(255,255,255,0.7); }
+.s4-step.done { color: var(--cyan); }
+.s4-step.done .step-dot { background: var(--cyan); }
+
+.step-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  flex-shrink: 0;
+  transition: background 0.3s;
+}
+
+/* ══════════════════════════════
+   ÉCRAN 5 — RÉSULTAT
+══════════════════════════════ */
+#s5 {
+  background: var(--gris-bg);
+}
+
+.s5-hero {
+  background: linear-gradient(135deg, var(--marine) 0%, var(--bleu) 100%);
+  padding: 48px 24px 64px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.s5-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 80% at 80% 50%, rgba(0,180,216,0.15) 0%, transparent 60%);
+}
+
+.s5-hero-content { position: relative; z-index: 1; }
+
+.s5-hero-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.55);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 12px;
+}
+
+.s5-hero-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.8);
+  margin-bottom: 6px;
+}
+
+.s5-economie-label {
+  font-size: 14px;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+
+.s5-economie-montant {
+  font-family: 'DM Serif Display', Georgia, serif;
+  font-size: clamp(56px, 12vw, 96px);
+  color: var(--blanc);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.s5-economie-montant span { color: var(--cyan); }
+
+.s5-economie-sub {
+  font-size: 16px;
+  color: rgba(255,255,255,0.55);
+  margin-bottom: 32px;
+}
+
+.s5-pills {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.s5-pill {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 100px;
+  padding: 8px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--blanc);
+}
+
+.s5-pill span { color: var(--cyan); }
+
+/* Body résultat */
+.s5-body {
+  max-width: 780px;
+  margin: -32px auto 0;
+  padding: 0 16px 48px;
+  position: relative;
+  z-index: 2;
+}
+
+.s5-card {
+  background: var(--blanc);
+  border-radius: 16px;
+  border: 1px solid var(--gris-bordure);
+  box-shadow: 0 8px 32px rgba(10,22,40,0.08);
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.s5-card-header {
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--gris-clair);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.s5-card-header .icon {
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+.icon-bleu { background: #EEF5FF; }
+.icon-vert { background: var(--vert-clair); }
+.icon-bleu svg { stroke: var(--bleu); }
+.icon-vert svg { stroke: var(--vert); }
+.s5-card-header .icon svg { width: 18px; height: 18px; fill: none; stroke-width: 2; }
+
+.s5-card-header h3 { font-size: 15px; font-weight: 700; color: var(--gris-texte); }
+
+.s5-card-body { padding: 20px 24px; }
+
+
+
+/* Grille stats */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.stat-item {
+  background: var(--gris-clair);
+  border-radius: 10px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-label { font-size: 11px; font-weight: 700; color: var(--gris-moyen); text-transform: uppercase; letter-spacing: 0.5px; }
+.stat-val { font-size: 20px; font-weight: 800; color: var(--gris-texte); }
+.stat-val.accent { color: var(--bleu); }
+.stat-val.green { color: var(--vert); }
+.stat-sub { font-size: 12px; color: var(--gris-moyen); }
+
+/* CTA */
+.cta-card {
+  background: linear-gradient(135deg, var(--marine) 0%, var(--bleu) 100%);
+  border-radius: 16px;
+  padding: 32px 24px;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.cta-card h3 {
+  font-size: clamp(18px, 3vw, 24px);
+  font-weight: 800;
+  color: var(--blanc);
+  margin-bottom: 10px;
+  line-height: 1.2;
+}
+
+.cta-card p {
+  font-size: 15px;
+  color: rgba(255,255,255,0.55);
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+
+.btn-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--cyan);
+  color: var(--marine);
+  font-size: 16px;
+  font-weight: 700;
+  font-family: inherit;
+  padding: 16px 36px;
+  border-radius: 100px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 6px 24px rgba(0,180,216,0.4);
+}
+
+.btn-cta:hover { background: #00C8EF; transform: translateY(-1px); }
+.btn-cta svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.5; }
+
+.s5-footer {
+  text-align: center;
+  padding: 0 16px 16px;
+}
+
+.s5-footer p { font-size: 12px; color: var(--gris-moyen); line-height: 1.6; }
+
+.btn-nouvelle-sim {
+  background: transparent;
+  border: 1.5px solid var(--gris-bordure);
+  color: var(--gris-moyen);
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  padding: 10px 24px;
+  border-radius: 100px;
+  cursor: pointer;
+  margin-top: 12px;
+  transition: all 0.2s;
+}
+
+.btn-nouvelle-sim:hover { border-color: var(--bleu); color: var(--bleu); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 600px) {
+  .form-row { grid-template-columns: 1fr; }
+  .form-section { padding: 20px 16px; }
+  .form-footer { flex-direction: column; align-items: stretch; }
+  .btn-simuler { justify-content: center; }
+  .comparaison { grid-template-columns: 1fr; }
+  .comp-arrow { display: none; }
+  .s5-body { padding: 0 12px 32px; }
+  .s5-card-body { padding: 16px; }
+  .s5-card-header { padding: 16px 16px 12px; }
+  .cta-card { padding: 24px 16px; }
+}
+
+@media (min-width: 1024px) {
+  .s1-content { padding: 80px 40px; }
+  .s2-content { padding: 80px 40px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══ ÉCRAN 1 — ACCROCHE ══ -->
+<!-- HEADER GLOBAL -->
+<div id="globalHeader" style="
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(10,22,40,0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 24px;
+  height: 60px;
+">
+  <div style="display:flex;align-items:center;gap:12px;">
+    <img src="data:image/jpeg;base64,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" style="height:36px;width:36px;object-fit:contain;border-radius:6px;" alt="UAI Invest">
+    <div>
+      <div style="font-size:15px;font-weight:700;color:#fff;letter-spacing:0.3px;line-height:1.1;">UAI Invest</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.45);letter-spacing:0.3px;">Partenaire de courtage en assurance</div>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;gap:16px;">
+    <div style="
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 6px;
+      padding: 5px 12px;
+      display:flex;align-items:center;gap:7px;
+    ">
+      <div style="width:8px;height:8px;border-radius:50%;background:#06A77D;flex-shrink:0;"></div>
+      <span style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.65);letter-spacing:0.3px;">Enregistré ORIAS</span>
+    </div>
+    <div style="font-size:11px;color:rgba(255,255,255,0.3);display:none;" id="oriasMobile">ORIAS</div>
+  </div>
+</div>
+
+<div style="height:60px;"></div>
+
+<div class="screen active" id="s1">
+  <div class="s1-bg-gradient"></div>
+  <div class="s1-grid"></div>
+  <div class="s1-content">
+    <div class="s1-badge">AssurScan · Analyse gratuite</div>
+    <div class="s1-chiffre">12 800<span>€</span></div>
+    <div class="s1-chiffre-label">C'est ce que perd en moyenne un emprunteur sur son assurance sans le savoir</div>
+    <h1 class="s1-headline">Chaque mois, votre assurance<br><em>vous coûte trop cher.</em></h1>
+    <p class="s1-sub">Votre banque prélève chaque mois une prime bien au-dessus du marché. La loi vous permet d'y mettre fin. Découvrez exactement combien vous perdez.</p>
+    <button class="btn-scan" onclick="goScreen(2)">
+      Voir ce que je perds
+      <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+  </div>
+  <div class="s1-scroll-hint">
+    <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+    Continuer
+  </div>
+</div>
+
+<!-- ══ ÉCRAN 2 — RÉVÉLATION ══ -->
+<div class="screen" id="s2">
+  <div class="s2-content">
+    <div class="s2-eyebrow">Ce que votre banque ne vous a pas dit</div>
+    <h2 class="s2-title">Votre assurance de groupe<br><em>vous coûte bien trop cher</em></h2>
+    <p class="s2-intro">Quand vous avez signé votre crédit, votre banque vous a proposé son assurance. C'est la moins avantageuse du marché. Voici pourquoi.</p>
+
+    <div class="s2-cards">
+      <div class="s2-card">
+        <div class="s2-card-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h3>Un taux mutualisé, pas personnalisé</h3>
+        <p>Votre banque applique un taux moyen à tous ses clients. Vous payez pour les autres, pas pour votre profil réel.</p>
+        <div class="s2-card-reveal">→ Votre profil mérite mieux</div>
+      </div>
+      <div class="s2-card">
+        <div class="s2-card-icon">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+        <h3>Des marges cachées dans votre prime</h3>
+        <p>Les assurances bancaires intègrent des marges commerciales importantes. Ce surcoût, vous le payez chaque mois sans le savoir.</p>
+        <div class="s2-card-reveal">→ Découvrez le vrai coût</div>
+      </div>
+      <div class="s2-card">
+        <div class="s2-card-icon">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <h3>Depuis 2022, tout a changé</h3>
+        <p>La loi Lemoine vous autorise à résilier et substituer votre assurance à tout moment, sans frais, sans pénalités.</p>
+        <div class="s2-card-reveal">→ Calculez votre économie</div>
+      </div>
+    </div>
+
+    <button class="btn-continuer" onclick="goScreen(3)">
+      Calculer mon économie personnelle
+      <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- ══ ÉCRAN 3 — FORMULAIRE ══ -->
+<div class="screen" id="s3">
+  <div class="s3-content">
+    <div class="s3-header">
+      <div class="s3-step">Analyse personnalisée</div>
+      <h2>Renseignez votre situation</h2>
+      <p>Ces informations nous permettent de calculer précisément votre économie potentielle.</p>
+    </div>
+
+    <div class="form-card">
+      <div class="form-section">
+        <div class="form-section-title">Vos informations</div>
+        <div class="form-row">
+          <div class="fg">
+            <label>Nom <span style="color:#E63946">*</span></label>
+            <input type="text" id="a-nom" placeholder="MARTIN" autocomplete="off">
+          </div>
+          <div class="fg">
+            <label>Prénom <span style="color:#E63946">*</span></label>
+            <input type="text" id="a-prenom" placeholder="Jean" autocomplete="off">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="fg">
+            <label>Téléphone <span style="color:#E63946">*</span></label>
+            <input type="tel" id="a-tel" placeholder="06 12 34 56 78" autocomplete="off">
+          </div>
+          <div class="fg">
+            <label>Âge <span style="color:#E63946">*</span></label>
+            <div class="input-unit">
+              <input type="number" id="a-age" placeholder="42" min="18" max="80" autocomplete="off">
+              <span class="unit">ans</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title">Votre crédit immobilier</div>
+        <div class="form-row">
+          <div class="fg">
+            <label>Capital restant dû <span style="color:#E63946">*</span></label>
+            <div class="input-unit">
+              <input type="number" id="a-capital" placeholder="180 000" min="10000" autocomplete="off">
+              <span class="unit">€</span>
+            </div>
+          </div>
+          <div class="fg">
+            <label>Durée restante <span style="color:#E63946">*</span></label>
+            <div class="input-unit">
+              <input type="number" id="a-duree" placeholder="18" min="1" max="30" autocomplete="off">
+              <span class="unit">ans</span>
+            </div>
+          </div>
+        </div>
+        <div class="form-row single">
+          <div class="fg">
+            <label>Taux d'assurance actuel <span class="opt">(facultatif)</span></label>
+            <div class="input-unit">
+              <input type="number" id="a-taux" placeholder="0.36" step="0.01" min="0.05" max="2" autocomplete="off">
+              <span class="unit">%</span>
+            </div>
+            <div class="taux-info">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              Si vous ne connaissez pas votre taux, nous utilisons le taux moyen bancaire constaté (0,36 % avant 45 ans, 0,42 % après).
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-footer">
+        <p>🔒 Vos données sont confidentielles et utilisées uniquement pour cette simulation.</p>
+        <button class="btn-simuler" onclick="lancerSimulation()">
+          Calculer mon économie
+          <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ÉCRAN 4 — ANALYSE ══ -->
+<div class="screen" id="s4">
+  <div class="s4-content">
+    <div class="scan-animation">
+      <div class="scan-circle"></div>
+      <div class="scan-circle-2"></div>
+      <svg class="scan-icon" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+    </div>
+    <div class="s4-title">Analyse en cours…</div>
+    <div class="s4-steps" id="s4Steps">
+      <div class="s4-step" id="as1"><div class="step-dot"></div>Vérification du profil emprunteur…</div>
+      <div class="s4-step" id="as2"><div class="step-dot"></div>Comparaison avec les offres du marché…</div>
+      <div class="s4-step" id="as3"><div class="step-dot"></div>Calcul de l'économie potentielle…</div>
+      <div class="s4-step" id="as4"><div class="step-dot"></div>Génération de votre rapport personnalisé…</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ÉCRAN 5 — RÉSULTAT ══ -->
+<div class="screen" id="s5">
+  <div class="s5-hero">
+    <div class="s5-hero-content">
+      <div class="s5-hero-label">Rapport AssurScan · Analyse personnalisée</div>
+      <div class="s5-hero-name" id="r-nom">—</div>
+      <div class="s5-economie-label">Argent perdu si vous n'agissez pas</div>
+      <div class="s5-economie-montant" id="r-economie-total">—<span>€</span></div>
+      <div class="s5-economie-sub" id="r-economie-sub">soit — € par mois</div>
+      <div class="s5-pills">
+        <div class="s5-pill">Capital restant : <span id="r-capital">—</span></div>
+        <div class="s5-pill">Durée restante : <span id="r-duree">—</span></div>
+        <div class="s5-pill">Âge : <span id="r-age">—</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="s5-body">
+
+
+    <div class="s5-card">
+      <div class="s5-card-header">
+        <div class="icon icon-vert">
+          <svg viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+        </div>
+        <h3>Détail de votre simulation</h3>
+      </div>
+      <div class="s5-card-body">
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-label">Économie / mois</div>
+            <div class="stat-val green" id="r-eco-mois">—</div>
+            <div class="stat-sub">dès le 1er mois</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">Économie / an</div>
+            <div class="stat-val green" id="r-eco-an">—</div>
+            <div class="stat-sub">dès la 1ère année</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">Durée restante</div>
+            <div class="stat-val accent" id="r-duree-stat">—</div>
+            <div class="stat-sub">sur votre crédit</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">Économie totale</div>
+            <div class="stat-val green" id="r-eco-total">—</div>
+            <div class="stat-sub">sur durée restante</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cta-card">
+      <h3>Concrétisez cette économie maintenant</h3>
+      <p>Un conseiller analyse votre dossier et vous accompagne dans la substitution de votre assurance. Gratuit, sans engagement.</p>
+      <button class="btn-cta" onclick="demanderRappel()">
+        Être recontacté gratuitement
+        <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13 19.79 19.79 0 0 1 1.61 4.38C1.61 3.12 2.5 2.08 3.76 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6 6l1.07-1.07a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      </button>
+    </div>
+
+    <div class="s5-footer">
+      <div style="
+        background:#F0F4FF;
+        border:1px solid #C5D8F5;
+        border-left:3px solid #1A4F8A;
+        border-radius:8px;
+        padding:14px 18px;
+        font-size:13px;
+        color:#1A4F8A;
+        line-height:1.6;
+        margin-bottom:16px;
+        text-align:left;
+      ">
+        <strong>Passé par un courtier ?</strong> Votre courtier a optimisé votre taux de crédit — c'est son métier. Mais l'assurance emprunteur est un marché à part, rarement négocié lors de la mise en place du prêt. Cette simulation porte uniquement sur ce poste de dépense souvent oublié.
+      </div>
+      <p>Simulation établie sur la base des taux moyens du marché. Les résultats sont indicatifs et peuvent varier selon votre profil exact et les offres disponibles. UAI Invest — Courtier enregistré ORIAS.</p>
+      <br>
+      <button class="btn-nouvelle-sim" onclick="nouvelleSimulation()">Nouvelle simulation</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const SHEETS_URL = 'SHEETS_URL_ICI';
+
+  let prospect = {};
+
+  function goScreen(n) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('s' + n).classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  function lancerSimulation() {
+    const nom = document.getElementById('a-nom').value.trim();
+    const prenom = document.getElementById('a-prenom').value.trim();
+    const tel = document.getElementById('a-tel').value.trim();
+    const age = parseInt(document.getElementById('a-age').value);
+    const capital = parseFloat(document.getElementById('a-capital').value);
+    const duree = parseFloat(document.getElementById('a-duree').value);
+    const tauxSaisi = parseFloat(document.getElementById('a-taux').value);
+
+    if (!nom || !prenom || !tel || !age || !capital || !duree) {
+      alert('Veuillez renseigner tous les champs obligatoires.');
+      return;
+    }
+
+    // Taux par défaut selon l'âge si non renseigné
+    const tauxActuel = tauxSaisi || (age >= 45 ? 0.42 : 0.36);
+    // Taux marché estimé (délégation d'assurance)
+    const tauxNouveau = age >= 45 ? 0.18 : 0.13;
+
+    prospect = { nom: nom.toUpperCase(), prenom, tel, age, capital, duree, tauxActuel, tauxNouveau };
+
+    goScreen(4);
+    lancerAnalyse();
+  }
+
+  function lancerAnalyse() {
+    const steps = ['as1','as2','as3','as4'];
+    steps.forEach(id => {
+      const el = document.getElementById(id);
+      el.classList.remove('visible','done');
+    });
+
+    const delays = [500, 1200, 2000, 2800];
+    delays.forEach((d, i) => {
+      setTimeout(() => {
+        document.getElementById(steps[i]).classList.add('visible');
+        if (i > 0) document.getElementById(steps[i-1]).classList.add('done');
+      }, d);
+    });
+
+    setTimeout(() => {
+      document.getElementById('as4').classList.add('done');
+      afficherResultat();
+    }, 3800);
+  }
+
+  function afficherResultat() {
+    const { nom, prenom, age, capital, duree, tauxActuel, tauxNouveau } = prospect;
+
+    const primeActuelle = Math.round(capital * tauxActuel / 100);
+    const primeNouvelle = Math.round(capital * tauxNouveau / 100);
+    const ecoAn = primeActuelle - primeNouvelle;
+    const ecoTotal = Math.round(ecoAn * duree);
+    const ecoMois = Math.round(ecoAn / 12);
+
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('fr-FR');
+    const dateHeure = now.toLocaleString('fr-FR');
+
+    document.getElementById('r-nom').textContent = prenom + ' ' + nom;
+    document.getElementById('r-economie-total').innerHTML = fmt(ecoTotal) + '<span>€</span>';
+    document.getElementById('r-economie-sub').textContent = 'soit ' + fmt(ecoMois) + ' € par mois';
+    document.getElementById('r-capital').textContent = fmt(capital) + ' €';
+    document.getElementById('r-duree').textContent = duree + ' ans';
+    document.getElementById('r-age').textContent = age + ' ans';
+    document.getElementById('r-eco-mois').textContent = fmt(ecoMois) + ' €';
+    document.getElementById('r-eco-an').textContent = fmt(ecoAn) + ' €';
+    document.getElementById('r-duree-stat').textContent = duree + ' ans';
+    document.getElementById('r-eco-total').textContent = fmt(ecoTotal) + ' €';
+
+    goScreen(5);
+
+    // Envoi Google Sheets
+    const params = new URLSearchParams({
+      date: dateHeure,
+      nom: prospect.nom,
+      prenom: prospect.prenom,
+      tel: prospect.tel,
+      age: prospect.age,
+      capital: prospect.capital,
+      duree: prospect.duree,
+      taux_actuel: tauxActuel,
+      taux_nouveau: tauxNouveau,
+      eco_mensuelle: ecoMois,
+      eco_annuelle: ecoAn,
+      eco_totale: ecoTotal,
+      statut: 'Simulation'
+    });
+
+    const img = new Image();
+    img.src = SHEETS_URL + '?' + params.toString();
+  }
+
+  function demanderRappel() {
+    // Mettre à jour le statut dans sheets
+    const params = new URLSearchParams({
+      action: 'rappel',
+      nom: prospect.nom,
+      prenom: prospect.prenom,
+      tel: prospect.tel
+    });
+    const img = new Image();
+    img.src = SHEETS_URL + '?' + params.toString();
+
+    alert('✅ Demande enregistrée ! Un conseiller vous contactera très prochainement au ' + prospect.tel);
+  }
+
+  function nouvelleSimulation() {
+    prospect = {};
+    ['a-nom','a-prenom','a-tel','a-age','a-capital','a-duree','a-taux'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+    goScreen(1);
+  }
+
+  function fmt(n) {
+    return Math.round(n).toLocaleString('fr-FR');
+  }
+</script>
+</body>
+</html>
